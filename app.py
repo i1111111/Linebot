@@ -55,14 +55,14 @@ def handle_message(event):
         # 发送一个代表高兴的贴图 (笑脸贴图)
         sticker_message = StickerSendMessage(
             package_id='1',  # 选择笑脸贴图的包ID
-            sticker_id='13'  # 选择笑脸贴图的ID
+            sticker_id='4'  # 选择笑脸贴图的ID
         )
         line_bot_api.reply_message(event.reply_token, sticker_message)
     elif message == "心情不好":
         # 发送一个代表伤心的贴图 (哭泣贴图)
         sticker_message = StickerSendMessage(
             package_id='1',  # 选择哭泣贴图的包ID
-            sticker_id='5'   # 选择哭泣贴图的ID
+            sticker_id='13'   # 选择哭泣贴图的ID
         )
         line_bot_api.reply_message(event.reply_token, sticker_message)
     else:
