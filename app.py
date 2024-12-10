@@ -45,31 +45,35 @@ def callback():
 # 訊息傳遞區塊
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    message = event.message.text
-    
-    # 判断用户输入并发送对应的回复
-    if message == "天氣":
-        reply_text = "請稍等，我幫您查詢天氣資訊！"
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply_text))
-    elif message == "心情好":
-        # 发送一个代表高兴的贴图 (笑脸贴图)
-        sticker_message = StickerSendMessage(
-            package_id='1',  # 选择笑脸贴图的包ID
-            sticker_id='4'  # 选择笑脸贴图的ID
+    message = text=event.message.text
+    if re.match('告訴我秘密',message):
+        buttons_template_message = TemplateSendMessage(
+        alt_text='這是樣板傳送訊息',
+        template=ButtonsTemplate(
+            thumbnail_image_url='https://i.imgur.com/kNBl363.jpg',
+            title='中華民國',
+            text='選單功能－TemplateSendMessage',
+            actions=[
+                PostbackAction(
+                    label='這是PostbackAction',
+                    display_text='顯示文字',
+                    data='實際資料'
+                ),
+                MessageAction(
+                    label='這是MessageAction',
+                    text='實際資料'
+                ),
+                URIAction(
+                    label='這是URIAction',
+                    uri='https://en.wikipedia.org/wiki/Taiwan'
+                )
+            ]
         )
-        line_bot_api.reply_message(event.reply_token, sticker_message)
-    elif message == "心情不好":
-        # 发送一个代表伤心的贴图 (哭泣贴图)
-        sticker_message = StickerSendMessage(
-            package_id='1',  # 选择哭泣贴图的包ID
-            sticker_id='13'   # 选择哭泣贴图的ID
-        )
-        line_bot_api.reply_message(event.reply_token, sticker_message)
+    )
+        line_bot_api.reply_message(event.reply_token, buttons_template_message)
     else:
-        reply_text = "很抱歉，我目前無法理解這個內容。"
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply_text))
-
-# 主程式
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(message))
+#主程式
 import os
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
