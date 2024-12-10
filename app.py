@@ -42,14 +42,40 @@ def callback():
 ##### 基本上程式編輯都在這個function #####
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    message = TextSendMessage(text=event.message.text)
-    line_bot_api.reply_message(event.reply_token,message)
+    message = text=event.message.text
     if re.match('告訴我秘密',message):
-        audio_message = AudioSendMessage(
-            original_content_url='https://campus-studio.com/download/twsong.mp3',
-            duration=81000
+        imagemap_message = ImagemapSendMessage(
+            base_url='https://i.imgur.com/xMUKNtn.jpg',
+            alt_text='組圖訊息',
+            base_size=BaseSize(height=2000, width=2000),
+            actions=[
+                URIImagemapAction(
+                    link_uri='https://en.wikipedia.org/wiki/Cebu',
+                    area=ImagemapArea(
+                        x=0, y=0, width=1000, height=1000
+                    )
+                ),
+                URIImagemapAction(
+                    link_uri='https://en.wikipedia.org/wiki/Taipei',
+                    area=ImagemapArea(
+                        x=1000, y=0, width=1000, height=1000
+                    )
+                ),
+                URIImagemapAction(
+                    link_uri='https://en.wikipedia.org/wiki/Osaka',
+                    area=ImagemapArea(
+                        x=0, y=1000, width=1000, height=1000
+                    )
+                ),
+                URIImagemapAction(
+                    link_uri='https://en.wikipedia.org/wiki/Shanghai',
+                    area=ImagemapArea(
+                        x=1000, y=1000, width=1000, height=1000
+                    )
+                )
+            ]
         )
-        line_bot_api.reply_message(event.reply_token, audio_message)
+        line_bot_api.reply_message(event.reply_token, imagemap_message)
     else:
         line_bot_api.reply_message(event.reply_token, TextSendMessage(message))
 #主程式
