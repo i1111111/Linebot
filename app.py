@@ -46,14 +46,28 @@ def callback():
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     message = event.message.text
-    # 处理用户输入
+    
+    # 判断用户输入并发送对应的回复
     if message == "天氣":
         reply_text = "請稍等，我幫您查詢天氣資訊！"
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply_text))
+    elif message == "心情好":
+        # 发送一个代表高兴的贴图 (笑脸贴图)
+        sticker_message = StickerSendMessage(
+            package_id='1',  # 选择笑脸贴图的包ID
+            sticker_id='13'  # 选择笑脸贴图的ID
+        )
+        line_bot_api.reply_message(event.reply_token, sticker_message)
+    elif message == "心情不好":
+        # 发送一个代表伤心的贴图 (哭泣贴图)
+        sticker_message = StickerSendMessage(
+            package_id='1',  # 选择哭泣贴图的包ID
+            sticker_id='5'   # 选择哭泣贴图的ID
+        )
+        line_bot_api.reply_message(event.reply_token, sticker_message)
     else:
         reply_text = "很抱歉，我目前無法理解這個內容。"
-    
-    # 回覆訊息
-    line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply_text))
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply_text))
 
 # 主程式
 import os
