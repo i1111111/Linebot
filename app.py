@@ -2,7 +2,6 @@
 
 #載入LineBot所需要的套件
 from flask import Flask, request, abort
-
 from linebot import (
     LineBotApi, WebhookHandler
 )
@@ -10,7 +9,8 @@ from linebot.exceptions import (
     InvalidSignatureError
 )
 from linebot.models import *
-import re
+import datetime
+
 app = Flask(__name__)
 
 # 必須放上自己的Channel Access Token
@@ -18,7 +18,11 @@ line_bot_api = LineBotApi('60Cu38jaKl8XCZL5n8K+TJvs7heExFNDNHKvkYq8fv83wQRdb2G3k
 # 必須放上自己的Channel Secret
 handler = WebhookHandler('9f8c5f245a4a4d2734a2e7ac1477f6f0')
 
-line_bot_api.push_message('U0d6d8cfdae6abfa3e4628b1ab7b976c9', TextSendMessage(text='你可以開始了'))
+# 推送欢迎信息
+line_bot_api.push_message(
+    'U0d6d8cfdae6abfa3e4628b1ab7b976c9', 
+    TextSendMessage(text=f"您好,目前時間是 {datetime.datetime.now().strftime('%Y/%m/%d %H:%M')} ，請問需要什麼服務呢?")
+)
 
 # 監聽所有來自 /callback 的 Post Request
 @app.route("/callback", methods=['POST'])
@@ -38,47 +42,20 @@ def callback():
 
     return 'OK'
 
-#訊息傳遞區塊
-##### 基本上程式編輯都在這個function #####
+# 訊息傳遞區塊
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    message = text=event.message.text
-    if re.match('告訴我秘密',message):
-        imagemap_message = ImagemapSendMessage(
-            base_url='https://i.imgur.com/xMUKNtn.jpg',
-            alt_text='組圖訊息',
-            base_size=BaseSize(height=2000, width=2000),
-            actions=[
-                URIImagemapAction(
-                    link_uri='https://en.wikipedia.org/wiki/Cebu',
-                    area=ImagemapArea(
-                        x=0, y=0, width=1000, height=1000
-                    )
-                ),
-                URIImagemapAction(
-                    link_uri='https://en.wikipedia.org/wiki/Taipei',
-                    area=ImagemapArea(
-                        x=1000, y=0, width=1000, height=1000
-                    )
-                ),
-                URIImagemapAction(
-                    link_uri='https://en.wikipedia.org/wiki/Osaka',
-                    area=ImagemapArea(
-                        x=0, y=1000, width=1000, height=1000
-                    )
-                ),
-                URIImagemapAction(
-                    link_uri='https://en.wikipedia.org/wiki/Shanghai',
-                    area=ImagemapArea(
-                        x=1000, y=1000, width=1000, height=1000
-                    )
-                )
-            ]
-        )
-        line_bot_api.reply_message(event.reply_token, imagemap_message)
+    message = event.message.text
+    # 处理用户输入
+    if message == "天氣":
+        reply_text = "請稍等，我幫您查詢天氣資訊！"
     else:
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(message))
-#主程式
+        reply_text = "很抱歉，我目前無法理解這個內容。"
+    
+    # 回覆訊息
+    line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply_text))
+
+# 主程式
 import os
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
